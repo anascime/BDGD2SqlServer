@@ -3,6 +3,4 @@ processamento_dbf.log
 .vscode/launch.json
 **/**.pyc
 .gitignore
-dbf_split.py
-importDBF.py
-pyproject.toml
+.local/

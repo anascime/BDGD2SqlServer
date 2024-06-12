@@ -1,19 +1,18 @@
 # Configurações de conexão com o SQLServer
 bancos:
-    server: 'localhost'
-    database: 'GEO_SIGR_PERDAS_EDP_SP'
+    server: 'ANANDA_AN\ANASCIMESERVER'
+    database: 'ENEL_GEO_SIGR_PERDAS19'
     username: 'usr_GeoPerdas'
     password: '123456'
     schema: 'SDE'
 
-tipo_arquivo: "gdb"    # gbd ou dbf
-dbf_directory: 'D:\\Doutorado\\PD\dados\\BDGD\\Energisa\\Shapefile'
+tipo_arquivo: "dbf"    #: [gbd ou dbf]
 
-#gdb_directory: 'D:\\Doutorado\\PD\dados\\BDGD\\Energisa'
-#gdb_file: 'Energisa_MS_404_2022-12-31_V11_20231219-1342.gdb'
+data_base: "2019-12-31"
+dist: '390'
+cod_BDGD: '0907'
 
-gdb_directory: 'D:\Doutorado\PD\dados\BDGD\EDP_SP_391_2022-12-31_V11_20231030-1400.gdb'
-gdb_file: 'EDP_SP_391_2022-12-31_V11_20231030-1400.gdb'
-data_base: "2022-12-31"
-dist: '391'
-cod_BDGD: '1400'
+dbf_directory: 'E:\Ananda\Documents\Enerq\02_dbf_sql\shape_enel_2019'
+
+gdb_directory: 'E:\Ananda\Documents\Enerq\gdbs\ENEL_SP_390_2019-12-31_M10_20201222-0907.gdb'
+gdb_file: 'ENEL_SP_390_2019-12-31_M10_20201222-0907.gdb'

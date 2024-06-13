@@ -113,22 +113,26 @@ def process_gdb_files(gdb_file, engine, config_bdgd, data_base, data_carga, colu
 
             # verifica se o arquivo já foi processado
             table_name_sql = table_name.replace('_tab', '')
-            exist_info = pd.DataFrame()
+            # exist_info = pd.DataFrame()
 
             if schema != '':
                 full_table_name = f'{schema}.{table_name_sql}'
+
             try:
-                exist_info = pd.read_sql_query(f"SELECT TOP(1) * FROM {full_table_name}", conn)
+                exist_info = pd.read_sql(f"SELECT TOP(1) * FROM {full_table_name}", conn)
+
+                if len(exist_info) > 0:
+                    logging.info(f"{table_name}: \tNão processado. Tabela possui dados.")
+                    print(f"{table_name}: \tNão processado. Tabela possui dados.")
+
+                    continue
+
             except Exception as e:
                 if '42S02' in e.args[0]:  # tabela não existe
                     logging.info(f"{table_name}: \tNão existe no SQL Server.")
                     print(f"{table_name}: \tNão existe no SQL Server.")
                     continue
 
-            if len(exist_info) > 0:
-                logging.info(f"{table_name}: \tNão processado. Tabela possui dados.")
-                print(f"{table_name}: \tNão processado. Tabela possui dados.")
-                continue
             """
             Leitura e inserção de dados de um grupo limitado de linhas para evitar erro de falta de memoria.
             A variável row_step indica a quantidade de linhas lidas da tabela da BDGD e posterior inserção no SQLServer
@@ -155,8 +159,8 @@ def process_gdb_files(gdb_file, engine, config_bdgd, data_base, data_carga, colu
                 # df = df[['OBJECTID'] + [col for col in df.columns if col != 'OBJECTID']]
 
                 # Localizando colunas que não exitem nas tabelas do sqlserver
-                list_col = conn.execute("SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME=?",
-                                        table_name_sql)
+                list_col = conn.execute(f"SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE "
+                                        f"TABLE_NAME='{table_name}'")
                 rows = list_col.all()
                 if len(rows) != 0:
                     listColSql = [row[0] for row in rows]

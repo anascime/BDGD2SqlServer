@@ -5,7 +5,7 @@ import pyodbc
 import pandas as pd
 import geopandas as gpd
 import fiona
-import sqlalchemy
+from sqlalchemy import create_engine
 import glob
 import time
 
@@ -80,15 +80,18 @@ def insert_data(cursor, table_name, data, data_base, data_carga):
     print(f"Dados inseridos com exito na tabela {table_name}.  ")
     cursor.execute('SET ANSI_WARNINGS on;')
 
-# Função para criar uma conexão com o banco de dados SQL Server
 def create_connection(config_bdgd):
-    return sqlalchemy.create_engine(f"mssql+pyodbc://"
+    """Função para criar uma conexão com o banco de dados SQL Server"""
+
+    engine =  create_engine(f"mssql+pyodbc://"
                                     f"{config_bdgd['bancos']['username']}:"
                                     f"{config_bdgd['bancos']['password']}@"
                                     f"{config_bdgd['bancos']['server']}/"
                                     f"{config_bdgd['bancos']['database']}?"
                                     f"driver=ODBC+Driver+17+for+SQL+Server",
                                     fast_executemany=True, pool_pre_ping=True)
+
+    return engine
 
 
 def insert_BDGD_consolidada(conn, data_base, data_carga, dist, cod_bdgd):
@@ -99,15 +102,19 @@ def insert_BDGD_consolidada(conn, data_base, data_carga, dist, cod_bdgd):
 
 # Função para processar arquivos GeoDatabase
 def process_gdb_files(gdb_file, engine, config_bdgd, data_base, data_carga, column_renames, schema):
-    with engine.connect() as conn:
+
+    with engine.connect() as conn, conn.begin():
         # gdf = gpd.read_file(gdb_file)
         layerlist = fiona.listlayers(gdb_file)
+
         for table_name in layerlist:
             print(f"{table_name}")
             proc_table_time_ini = time.time()
 
             # verifica se o arquivo já foi processado
             table_name_sql = table_name.replace('_tab', '')
+            exist_info = pd.DataFrame()
+
             if schema != '':
                 full_table_name = f'{schema}.{table_name_sql}'
             try:

@@ -6,7 +6,7 @@ bancos:
     password: '123456'
     schema: 'SDE'
 
-tipo_arquivo: "dbf"    #: [gbd ou dbf]
+tipo_arquivo: "gdb"    #: [gbd ou dbf]
 
 data_base: "2019-12-31"
 dist: '390'
